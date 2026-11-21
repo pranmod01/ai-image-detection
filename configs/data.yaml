@@ -1,0 +1,19 @@
+# Shared data settings. Change these only by team agreement:
+# everyone's data must match.
+
+data_root: data
+
+real:
+  hf_dataset: ILSVRC/imagenet-1k
+  hf_split: validation   # val set: no overlap with ImageNet-pretrained backbones' training data
+  num_images: 5000
+  out_dir: data/raw/real
+
+preprocess:
+  size: 256              # short-side resize, then center crop to size x size
+  jpeg_quality: 90       # every class is re-encoded with this, so format can't leak the label
+
+splits:                  # assigned by hashing source_id; same photo never crosses splits
+  train: 0.70
+  val: 0.15
+  test: 0.15

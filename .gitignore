@@ -1,0 +1,23 @@
+# Data and outputs live on each person's machine, never in git
+data/*
+!data/.gitkeep
+results/*
+!results/.gitkeep
+checkpoints/
+wandb/
+
+# The real-image manifest IS committed so everyone can verify the same set
+!data/manifest_real.csv
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# OS / editors
+.DS_Store
+.vscode/
+.idea/

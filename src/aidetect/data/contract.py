@@ -27,6 +27,7 @@ METADATA_COLUMNS = [
     "mask_area",   # fraction of pixels inpainted, 0-1; empty if N/A
     "editor",      # e.g. none, pil, sd15, sdxl, flux
     "split",       # train / val / test, from assign_split(source_id)
+    "params",      # full edit settings as JSON (recipe, prompt, seed...); empty if N/A
 ]
 
 

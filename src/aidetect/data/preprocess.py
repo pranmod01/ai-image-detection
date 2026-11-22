@@ -30,3 +30,13 @@ def jpeg_roundtrip(img: Image.Image, quality: int = 90) -> Image.Image:
 def standardize(img: Image.Image, size: int = 256, jpeg_quality: int = 90) -> Image.Image:
     """Resize + crop to a square, then JPEG re-encode. Apply as the LAST step."""
     return jpeg_roundtrip(resize_center_crop(img, size), jpeg_quality)
+
+
+def to_working_size(img: Image.Image, size: int = 512) -> Image.Image:
+    """Resize + center crop to the shared working size. Apply FIRST, before any edit.
+
+    Every image (real, classical, diffusion) goes through this, then the edit
+    (if any), then `standardize()`, so all classes are resized the same number
+    of times.
+    """
+    return resize_center_crop(img, size)

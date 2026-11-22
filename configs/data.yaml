@@ -10,6 +10,7 @@ real:
   out_dir: data/raw/real
 
 preprocess:
+  working_size: 512      # resize + crop before any edit (real images too)
   size: 256              # short-side resize, then center crop to size x size
   jpeg_quality: 90       # every class is re-encoded with this, so format can't leak the label
 

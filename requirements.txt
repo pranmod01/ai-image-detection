@@ -19,7 +19,7 @@ torch>=2.2
 torchvision>=0.17
 open_clip_torch>=2.24
 
-# Diffusion edits (Person B; GPU machine only)
-# diffusers>=0.27
-# transformers>=4.40
-# accelerate>=0.30
+# Diffusion edits (Person B; only needed on the GPU machine that generates edits)
+diffusers>=0.27
+transformers>=4.40
+accelerate>=0.30

@@ -11,6 +11,14 @@ num_sources: 200                 # first N usable images of data/manifest_real.c
 out_dir: processed/diffusion     # relative to data_root
 metadata: processed/metadata_diffusion.csv
 
+# Matched-pair set, evaluation only (keep its CSVs out of train.yaml): every
+# source gets ALL the ip2p instructions below, not just the one drawn for the
+# main set. scripts/make_matched_classical.py makes the same lighting edits with
+# classical tools.
+matched:
+  out_dir: processed/matched
+  metadata: processed/metadata_matched_ip2p.csv
+
 models:
   sd15: stable-diffusion-v1-5/stable-diffusion-v1-5
   sd15_inpaint: stable-diffusion-v1-5/stable-diffusion-inpainting
@@ -30,15 +38,28 @@ edits:
     class: light_ai
     num_inference_steps: 20
     guidance_scale: 7.5
-    image_guidance_scale: 1.5
+    # Tuned on a 16-source sweep: at image_guidance_scale 1.5 with "make the
+    # lighting ..." wording, IP2P changed more pixels than heavy img2img and
+    # "brighter" darkened most images. These settings give brightness / warmth
+    # shifts about the size of the classical edits.
+    image_guidance_scale: 2.0
+    # Check on every IP2P result, like the classical pipeline's LPIPS filter.
+    # About 8% of results overshoot (strong color casts, changed content) and a
+    # few move the lighting the wrong way; those are redrawn with a new seed.
+    # 0.25 is about the top of the light img2img range (97.5% fall below it)
+    # and under the classical ceiling of 0.30. If no attempt passes, the best
+    # one is kept and marked passed=false in params.
+    max_lpips: 0.25                # LPIPS (alex) vs. the source, on standardized images
+    require_direction: true        # brightness / warmth must move the instructed way
+    max_attempts: 4
     # One lighting edit per source image. edit_type and direction use the
     # classical pipeline's names (brightness factor > / < 1, white_balance
     # shift > / < 0), so matched pairs join on (source_id, edit_type, direction).
     instructions:
-      - {edit_type: brightness, direction: up, text: "make the lighting brighter"}
-      - {edit_type: brightness, direction: down, text: "make the lighting darker"}
-      - {edit_type: white_balance, direction: up, text: "make the lighting warmer, like golden hour"}
-      - {edit_type: white_balance, direction: down, text: "make the lighting cooler and bluer"}
+      - {edit_type: brightness, direction: up, text: "make it look slightly overexposed"}
+      - {edit_type: brightness, direction: down, text: "make the photo slightly darker"}
+      - {edit_type: white_balance, direction: up, text: "make the colors slightly warmer"}
+      - {edit_type: white_balance, direction: down, text: "make the colors slightly cooler"}
   img2img_heavy:
     class: heavy_ai
     strength: [0.6, 0.9]

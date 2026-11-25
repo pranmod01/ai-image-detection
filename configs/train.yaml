@@ -1,0 +1,30 @@
+# Shared training config. One file per run: copy this, change `model` /
+# `label_setup` / `run_name`. The resolved config is saved in the run directory.
+
+run_name: dct_resnet50_ordinal
+data_config: configs/data.yaml
+metadata:                        # pipeline CSVs to train on (paths relative to the repo)
+  - data/processed/metadata_real.csv
+  - data/processed/metadata_classical.csv
+  - data/processed/metadata_diffusion.csv
+
+model: dct_resnet50              # any name registered in src/models
+model_kwargs:
+  pretrained: true
+
+label_setup: ordinal             # ordinal | regression
+
+# Regression target ("edit magnitude"). PLACEHOLDER until the team agrees on a
+# definition: img2img strength and inpainting mask area are on different scales,
+# and classical / IP2P edits have no continuous magnitude yet, so they are left out.
+regression:
+  continuous_classes: [light_ai, heavy_ai]   # target = strength, else mask_area
+  fixed_targets: {real: 0.0, vae_only: 0.0}
+
+seed: 0
+epochs: 10
+batch_size: 32
+lr: 1.0e-4
+weight_decay: 1.0e-4
+num_workers: 4
+out_root: results

@@ -1,0 +1,48 @@
+# Diffusion edits + VAE-only control (Person B).
+# Every source image gets one version per entry in `edits`. Per-image parameters
+# (strength, mask, lighting instruction, noise) are drawn from a hash of
+# (seed, image_id), so re-running reproduces the same files and rows.
+# Working size, output size and JPEG quality come from data.yaml, like the
+# classical pipeline. A copy of this file is written next to the outputs.
+
+data_config: configs/data.yaml
+seed: 0
+num_sources: 200                 # first N usable images of data/manifest_real.csv (small batch)
+out_dir: processed/diffusion     # relative to data_root
+metadata: processed/metadata_diffusion.csv
+
+models:
+  sd15: stable-diffusion-v1-5/stable-diffusion-v1-5
+  sd15_inpaint: stable-diffusion-v1-5/stable-diffusion-inpainting
+  ip2p: timbrooks/instruct-pix2pix
+
+prompt: "a photo of a {label}"   # {label} = ImageNet class name of the source image
+num_inference_steps: 50          # img2img runs strength * this many steps
+guidance_scale: 7.5
+
+edits:
+  vae:                           # encode + decode with the SD 1.5 VAE, no diffusion
+    class: vae_only
+  img2img_light:
+    class: light_ai
+    strength: [0.1, 0.3]         # uniform range
+  ip2p:
+    class: light_ai
+    num_inference_steps: 20
+    guidance_scale: 7.5
+    image_guidance_scale: 1.5
+    # One lighting edit per source image. edit_type and direction use the
+    # classical pipeline's names (brightness factor > / < 1, white_balance
+    # shift > / < 0), so matched pairs join on (source_id, edit_type, direction).
+    instructions:
+      - {edit_type: brightness, direction: up, text: "make the lighting brighter"}
+      - {edit_type: brightness, direction: down, text: "make the lighting darker"}
+      - {edit_type: white_balance, direction: up, text: "make the lighting warmer, like golden hour"}
+      - {edit_type: white_balance, direction: down, text: "make the lighting cooler and bluer"}
+  img2img_heavy:
+    class: heavy_ai
+    strength: [0.6, 0.9]
+  inpaint:
+    class: heavy_ai
+    mask_area: [0.3, 0.6]        # target fraction of pixels; the actual area is logged
+    mask_aspect: [0.5, 2.0]      # rectangle width/height ratio

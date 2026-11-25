@@ -243,14 +243,14 @@ def metadata_row(recipe: dict, path: str, split: str) -> dict:
 
 
 # Quick visual checks (run from the repo root):
-#   one image, every op:   PYTHONPATH=src python -m aidetect.data.classical <image>
-#   recipes on N sources:  PYTHONPATH=src python -m aidetect.data.classical --recipes 8
+#   one image, every op:   python -m src.data.classical <image>
+#   recipes on N sources:  python -m src.data.classical --recipes 8
 if __name__ == "__main__":
     import csv
     import sys
     from pathlib import Path
 
-    from aidetect.data.preprocess import to_working_size
+    from src.data.preprocess import to_working_size
 
     out = Path("data/scratch/classical_demo")
     out.mkdir(parents=True, exist_ok=True)

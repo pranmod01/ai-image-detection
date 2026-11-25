@@ -33,11 +33,11 @@ also run `python scripts/download_imagenet.py --verify` at any time.
 ```
 configs/data.yaml            shared data settings (change only by team agreement)
 scripts/download_imagenet.py real-image download + verification
-src/aidetect/data/contract.py  class names, metadata columns, split assignment
-src/aidetect/data/preprocess.py  shared resize + JPEG (apply to EVERY image, last)
-src/aidetect/models/         detector registry; one file per detector
-src/aidetect/train/          shared training script
-src/aidetect/eval/           shared evaluation code
+src/data/contract.py         class names, metadata columns, split assignment
+src/data/preprocess.py       shared resize + JPEG (apply to EVERY image, last)
+src/models/                  detector registry; one file per detector
+src/train/                   shared training script
+src/eval/                    shared evaluation code
 data/                        local only, not in git (except the manifest)
 results/                     local only; log the runs you report in results.md
 ```

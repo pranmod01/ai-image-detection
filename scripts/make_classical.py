@@ -42,12 +42,12 @@ from PIL import Image
 from tqdm import tqdm
 
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "src"))
-from aidetect.data.classical import (  # noqa: E402
+sys.path.insert(0, str(ROOT))
+from src.data.classical import (  # noqa: E402
     aligned_reference, apply_recipe, make_recipe, metadata_row)
-from aidetect.data.contract import METADATA_COLUMNS  # noqa: E402
-from aidetect.data.preprocess import (  # noqa: E402
-    resize_center_crop, standardize, to_working_size)
+from src.data.contract import METADATA_COLUMNS  # noqa: E402
+from src.data.preprocess import (  # noqa: E402
+    save_standardized as _save_standardized, standardize, to_working_size)
 
 DATA = ROOT / "data"
 OUT = DATA / "processed"
@@ -58,21 +58,12 @@ WORKING = PP.get("working_size", 512)
 SIZE, QUALITY = PP["size"], PP["jpeg_quality"]
 MIN_SHORT_SIDE = PP.get("min_short_side", 256)
 
-CLASSICAL_COLS = METADATA_COLUMNS + ["params", "lpips", "ssim", "attempt"]
+CLASSICAL_COLS = METADATA_COLUMNS + ["lpips", "ssim", "attempt"]   # params is already a contract column
 DROPPED_COLS = ["source_id", "split", "best_lpips", "attempts"]
 
 
-# ---------------------------------------------------------------------------
-# Saving: one JPEG encode at the shared quality, identical to standardize()
-# ---------------------------------------------------------------------------
 def save_standardized(img: Image.Image, path: Path) -> None:
-    """Resize + crop, then a single JPEG save at the shared quality.
-
-    Reading the file back gives exactly what standardize() returns, so the
-    saved file is what every detector sees (no second JPEG encode).
-    """
-    path.parent.mkdir(parents=True, exist_ok=True)
-    resize_center_crop(img, SIZE).save(path, format="JPEG", quality=QUALITY)
+    _save_standardized(img, path, SIZE, QUALITY)
 
 
 # ---------------------------------------------------------------------------

@@ -29,8 +29,8 @@ from PIL import Image
 from tqdm import tqdm
 
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "src"))
-from aidetect.data.contract import assign_split  # noqa: E402
+sys.path.insert(0, str(ROOT))
+from src.data.contract import assign_split  # noqa: E402
 
 MANIFEST = ROOT / "data" / "manifest_real.csv"
 MANIFEST_COLS = ["image_id", "source_id", "path", "imagenet_label", "sha256",

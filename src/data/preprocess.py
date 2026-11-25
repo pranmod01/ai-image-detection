@@ -5,6 +5,7 @@ instead of anything about the edit.
 """
 
 import io
+from pathlib import Path
 
 from PIL import Image
 
@@ -40,3 +41,15 @@ def to_working_size(img: Image.Image, size: int = 512) -> Image.Image:
     of times.
     """
     return resize_center_crop(img, size)
+
+
+def save_standardized(img: Image.Image, path: Path, size: int = 256,
+                      jpeg_quality: int = 90) -> None:
+    """Resize + crop, then a single JPEG save at the shared quality.
+
+    Reading the file back gives exactly what standardize() returns, so the
+    saved file is what every detector sees (no second JPEG encode). Every
+    pipeline saves its images with this.
+    """
+    path.parent.mkdir(parents=True, exist_ok=True)
+    resize_center_crop(img, size).save(path, format="JPEG", quality=jpeg_quality)

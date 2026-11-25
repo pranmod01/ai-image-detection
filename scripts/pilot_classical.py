@@ -28,10 +28,10 @@ import yaml
 from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(ROOT / "src"))
-from aidetect.data.classical import (  # noqa: E402
+sys.path.insert(0, str(ROOT))
+from src.data.classical import (  # noqa: E402
     aligned_reference, apply_recipe, make_recipe, metadata_row)
-from aidetect.data.preprocess import standardize, to_working_size  # noqa: E402
+from src.data.preprocess import standardize, to_working_size  # noqa: E402
 
 OUT = ROOT / "data" / "scratch" / "pilot_classical"
 
